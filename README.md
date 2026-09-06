@@ -6,5 +6,7 @@ Backend code for our project that monitors and detects stress levels for army pe
 
 1. Clone the repo:
    ```bash
-   git clone [https://github.com/Shrestha-Ain/Stress_Detector.git](https://github.com/Shrestha-Ain/Stress_Detector.git)
+   git clone https://github.com/Shrestha-Ain/Stress_Detector.git
    cd Stress_Detector
+
+
