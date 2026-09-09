@@ -11,6 +11,7 @@ app = FastAPI(
     description="SIH 186 Modular FastAPI Backend"
 )
 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -24,6 +25,8 @@ app.include_router(auth_router, prefix="/api/auth", tags=["Auth & RBAC"])
 app.include_router(opencv_router, prefix="/api/opencv", tags=["OpenCV & Telemetry"])
 app.include_router(model_router, prefix="/api/assessment", tags=["ML Model & Dashboards"])
 
+
 @app.get("/")
 def root():
     return {"status": "online", "docs_url": "/docs"}
+

@@ -21,7 +21,14 @@ class InterventionPayload(BaseModel):
 
 @router.post("/evaluate")
 def evaluate_multimodal_assessment(payload: Standardized7VectorPayload):
-    is_critical = (payload.hr_bpm > 85 and payload.relax_hours_preceding < 4.0)
+    s_hrv = max(0.0, min(100.0, (1.0 - (payload.rmssd_ms - 20.0) / 60.0) * 100.0))
+    s_voice = min(100.0, max(0.0, payload.pitch_std_hz * 4.0))
+    s_behavior = max(0.0, min(100.0, (payload.blink_rate_bpm - 14.0) / (32.0 - 14.0) * 100.0))
+
+    # Multi-modal fusion: 40% HRV, 30% Voice, 30% Behavior
+    overall_stress = (0.40 * s_hrv) + (0.30 * s_voice) + (0.30 * s_behavior)
+    
+    is_critical = overall_stress >= 65.0 or payload.relax_hours_preceding < 4.0
     classification = "Critical Fatigue" if is_critical else "Cleared"
 
     shap_breakdown = [
