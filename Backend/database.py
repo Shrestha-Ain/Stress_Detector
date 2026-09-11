@@ -1,14 +1,3 @@
-"""
-TEMPORARY in-memory stand-in for MongoDB — use this until your teammate's
-Atlas cluster is ready. It mimics pymongo's collection interface
-(find_one, insert_one, update_one, find().sort().limit()) closely enough
-that auth_api.py and assessment_api.py need ZERO changes either way.
-
-⚠️ Data lives only in RAM — it's wiped every time the server restarts.
-Fine for local dev/demos, NOT for your real submission. Swap this whole
-file back to the real MongoClient version once you have MONGO_URI.
-"""
-
 
 class _Result:
     def __init__(self, matched_count=0):
