@@ -1,6 +1,5 @@
-## Backend
 
-FastAPI backend for Stress Detector for Army Personnel
+## FastAPI backend for Stress Detector for Army Personnel
 
 Backend code for our project that monitors and detects stress levels for army personnel, built with FastAPI.It processes physiological indicators (HRV), acoustic voice features, and behavioral tension metrics to calculate an overall stress index.
 
