@@ -6,7 +6,7 @@ Collections used: personnel, assessment_sessions, welfare_interventions.
 personnel document:
 {
     "_id": <uuid str>,
-    "personnel_id": str,           # unique, natural key used everywhere else
+    "Username": str,                # unique, natural key used everywhere else
     "full_name": str,
     "hashed_password": str,
     "role": str,                   # candidate | commander | medical_officer
@@ -59,7 +59,7 @@ def gen_id() -> str:
 def ensure_indexes():
     """Call once at startup (see main.py). Safe to call repeatedly — Mongo
     no-ops if the index already exists with the same spec."""
-    db.personnel.create_index([("personnel_id", ASCENDING)], unique=True)
+    db.personnel.create_index([("Username", ASCENDING)], unique=True)
     db.assessment_sessions.create_index([("personnel_id", ASCENDING), ("created_at", DESCENDING)])
     db.assessment_sessions.create_index([("classification", ASCENDING), ("created_at", DESCENDING)])
     db.welfare_interventions.create_index([("personnel_id", ASCENDING)])

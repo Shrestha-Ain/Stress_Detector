@@ -4,6 +4,7 @@ from starlette.concurrency import run_in_threadpool
 from pydantic import BaseModel
 import shutil
 import os
+import hashlib
 
 from database import get_db
 from models_db import gen_id
@@ -37,7 +38,7 @@ async def full_evaluate(
     recording (hours on duty, hours rested). personnel_id comes from the
     token — nothing else needs to be sent separately.
     """
-    personnel_id = current_user["personnel_id"]
+    personnel_id = current_user["Username"]
 
     video_temp = f"temp_{video.filename}"
     with open(video_temp, "wb") as f:
@@ -123,8 +124,12 @@ def get_commander_roster(
         if pid in seen:
             continue
         seen.add(pid)
+        # Commanders only ever see an anonymized ID + a simple flag — never
+        # the real ID, raw numbers, or reasoning. Only medical_officer role
+        # (see /welfare/triage below) can see the real personnel_id and why.
+        anonymized_id = hashlib.sha256(pid.encode()).hexdigest()[:12]
         roster.append({
-            "candidate_id": pid,
+            "candidate_id": anonymized_id,
             "readiness_tag": "Mandatory Rest Required" if s.get("classification") == "Critical Fatigue" else "Fit for Duty",
         })
     return {"total_evaluated": len(roster), "roster": roster}
@@ -133,8 +138,11 @@ def get_commander_roster(
 @router.get("/welfare/triage")
 def get_welfare_triage(
     db=Depends(get_db),
-    _current_user=Depends(require_role("commander", "medical_officer")),
+    _current_user=Depends(require_role("medical_officer")),
 ):
+    """Medical/welfare officers only — real personnel_id and full clinical
+    reasoning. Commanders cannot reach this endpoint (see roster above for
+    what they're allowed to see instead)."""
     critical_sessions = list(
         db.assessment_sessions.find({"classification": "Critical Fatigue"})
         .sort("created_at", -1)
@@ -157,7 +165,7 @@ def get_welfare_triage(
 def log_welfare_intervention(
     data: InterventionPayload,
     db=Depends(get_db),
-    _current_user=Depends(require_role("commander", "medical_officer")),
+    _current_user=Depends(require_role("medical_officer")),
 ):
     doc = {
         "_id": gen_id(),
