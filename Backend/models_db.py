@@ -13,22 +13,23 @@ personnel document:
     "unit_id": str,
     "baseline_hr_bpm": float | None,
     "baseline_pitch_hz": float | None,
-    "shift_type": str | None,      # set via /shift-input
-    "duty_hours_streak": float | None,
-    "relax_hours_preceding": float | None,
     "created_at": datetime,
 }
+# Note: duty_hours_streak / relax_hours_preceding are NOT stored here —
+# the candidate sends them fresh with every /full-evaluate call instead,
+# so they only ever live on the assessment_sessions record below.
 
 assessment_sessions document:
 {
     "_id": <uuid str>,
     "personnel_id": str,
-    "shift_type": str | None,
-    "duty_hours_streak": float | None,
-    "relax_hours_preceding": float | None,
+    "duty_hours_streak": float,
+    "relax_hours_preceding": float,
     "hr_bpm": float,
     "rmssd_ms": float,
     "blink_rate_bpm": float,
+    "brow_ratio": float,
+    "head_jitter": float,          # logged for now, not yet used in scoring
     "pitch_mean_hz": float,
     "pitch_std_hz": float,
     "stress_probability": float,

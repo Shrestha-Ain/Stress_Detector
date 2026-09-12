@@ -1,6 +1,7 @@
 fastapi
 uvicorn[standard]
-pymongo
+pymongo[srv]
+python-dotenv
 passlib[bcrypt]
 python-jose[cryptography]
 python-multipart
